@@ -1,4 +1,4 @@
-# Myg Chess Game
+# My Chess Game
 
 This is a chess game for Pharo based on Bloc, Toplo and Myg.
 
