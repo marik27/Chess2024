@@ -172,6 +172,12 @@ MyPiece >> moveTo: aSquare [
 ]
 
 { #category : 'rendering' }
+MyPiece >> renderPieceOn: aSquare [
+
+^self subclassResponsibility 
+]
+
+{ #category : 'rendering' }
 MyPiece >> rightFile [
 
 	^ self rightFileLegal: false
