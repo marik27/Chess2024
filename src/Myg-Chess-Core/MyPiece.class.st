@@ -174,7 +174,7 @@ MyPiece >> moveTo: aSquare [
 { #category : 'rendering' }
 MyPiece >> renderPieceOn: aSquare [
 
-^self subclassResponsibility 
+	 self subclassResponsibility
 ]
 
 { #category : 'rendering' }
