@@ -53,6 +53,42 @@ NullSquare >> printOn: aStream [
         aStream nextPutAll: 'Empty square'
 ]
 
+{ #category : 'as yet unclassified' }
+NullSquare >> renderBishop: aPiece [
+
+	^ nil
+]
+
+{ #category : 'as yet unclassified' }
+NullSquare >> renderKing: aPiece [
+
+	^ nil
+]
+
+{ #category : 'as yet unclassified' }
+NullSquare >> renderKnight: aPiece [
+
+	^ nil
+]
+
+{ #category : 'as yet unclassified' }
+NullSquare >> renderPawn: aPiece [
+
+	^ nil
+]
+
+{ #category : 'as yet unclassified' }
+NullSquare >> renderQueen: aPiece [
+
+	^ nil
+]
+
+{ #category : 'as yet unclassified' }
+NullSquare >> renderRook: aPiece [
+
+	^ nil
+]
+
 { #category : 'accessing' }
 NullSquare >> right [  
 ^ self
