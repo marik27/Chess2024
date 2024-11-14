@@ -1,8 +1,7 @@
 Class {
 	#name : 'MyChessSquare',
-	#superclass : 'BlElement',
+	#superclass : 'AbstractSquare',
 	#instVars : [
-		'color',
 		'name',
 		'label',
 		'piece',

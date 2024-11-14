@@ -1,9 +1,6 @@
 Class {
 	#name : 'NullSquare',
-	#superclass : 'BlElement',
-	#instVars : [
-		'color'
-	],
+	#superclass : 'AbstractSquare',
 	#category : 'Myg-Chess-Core',
 	#package : 'Myg-Chess-Core'
 }
@@ -27,15 +24,21 @@ NullSquare >> contents [
 ]
 
 { #category : 'accessing' }
+NullSquare >> down [
+
+	^ self
+]
+
+{ #category : 'accessing' }
 NullSquare >> hasPiece [
 
 	^ false
 ]
 
 { #category : 'initialization' }
-NullSquare >> initialize [ 
-
-color:= Color transparent 
+NullSquare >> initialize [
+	super initialize.
+	color := Color transparent
 ]
 
 { #category : 'accessing' }
@@ -53,4 +56,10 @@ NullSquare >> printOn: aStream [
 { #category : 'accessing' }
 NullSquare >> right [  
 ^ self
+]
+
+{ #category : 'accessing' }
+NullSquare >> up [
+
+	^ self
 ]
