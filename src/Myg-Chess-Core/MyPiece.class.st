@@ -44,10 +44,31 @@ MyPiece >> collectSquares: aBlock [
 ]
 
 { #category : 'rendering' }
-MyPiece >> collectSquares: aBlock legal: shouldBeLegal [
+MyPiece >> collectSquares: aBlock legal: shouldBeLegal [ 
+    | squares currentSquare nextSquare |
+    squares := OrderedCollection new.
+    currentSquare := self square.
 
-	^ self collectSquares: aBlock while: [ :aSquare |
-		  aSquare notNil and: [ shouldBeLegal ==> aSquare hasPiece not ] ]
+    [ currentSquare notNil ] whileTrue: [
+        "Évalue le bloc `aBlock` avec `currentSquare` pour obtenir la case suivante"
+        nextSquare := aBlock value: currentSquare.
+
+        "Arrête si `nextSquare` est nil"
+        nextSquare ifNil: [ ^ squares ].
+
+        "Ajoute la case si elle est valide selon `shouldBeLegal`"
+        (shouldBeLegal and: [ nextSquare contents isNil ]) ifTrue: [
+            squares add: nextSquare
+        ] ifFalse: [
+            "Arrête si la case n'est pas vide et shouldBeLegal est vrai"
+            ^ squares
+        ].
+
+        "Passe à la case suivante"
+        currentSquare := nextSquare.
+    ].
+    ^ squares
+
 ]
 
 { #category : 'rendering' }
@@ -135,6 +156,11 @@ MyPiece >> isKing [
 MyPiece >> isPiece [
 	
 	^ true
+]
+
+{ #category : 'testing' }
+MyPiece >> isQueen [ 
+^false
 ]
 
 { #category : 'testing' }
