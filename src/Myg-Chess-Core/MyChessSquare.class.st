@@ -107,6 +107,7 @@ MyChessSquare >> contents: aPiece [
 MyChessSquare >> down [
 
 	^ self + (0 @ -1)
+	
 ]
 
 { #category : 'asd' }
