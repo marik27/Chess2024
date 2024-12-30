@@ -8,11 +8,11 @@ Class {
 { #category : 'as yet unclassified' }
 MyInitialMoveState >> moveTo: aSquare for: aPawn [
     "Déplace le pion sur une nouvelle case et met à jour son état."
-aPawn square emptyContents.
+  aPawn square emptyContents.
 	aPawn square: aSquare.
     aSquare contents: aPawn .
 	aPawn state: MyStandardMoveState new.
-    
+	
 ]
 
 { #category : 'rendering' }

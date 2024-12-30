@@ -7,7 +7,7 @@ Class {
 
 { #category : 'as yet unclassified' }
 MyStandardMoveState >> moveTo: aSquare for: aPawn [ 
-        aPawn square emptyContents.
+      aPawn square emptyContents.
         aPawn square: aSquare.
         aSquare contents: aPawn.
 
@@ -21,7 +21,7 @@ MyStandardMoveState >> targetSquaresLegal: aPawn [
 		             ifTrue: [ aPawn square up ]
 		             ifFalse: [ aPawn square down ].
 		
-	
+	"if true renvoi signleStep sinon tableau vide"
   ^ (singleStepSquare notNil and: [ singleStepSquare hasPiece not ])
             ifTrue: [ { singleStepSquare } ]
             ifFalse: [ #() ].

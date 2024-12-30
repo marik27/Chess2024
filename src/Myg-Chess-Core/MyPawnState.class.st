@@ -8,6 +8,12 @@ Class {
 	#package : 'Myg-Chess-Core'
 }
 
+{ #category : 'as yet unclassified' }
+MyPawnState >> diagonalPawnCaptures: aPawn [
+	
+	  self subclassResponsibility.
+]
+
 { #category : 'accessing' }
 MyPawnState >> pawn: aPawn [ 
         pawn := aPawn.

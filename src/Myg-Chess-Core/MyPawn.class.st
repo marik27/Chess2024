@@ -49,25 +49,13 @@ MyPawn >> initialize [
 	state := MyInitialMoveState new.
 ]
 
-{ #category : 'testing' }
-MyPawn >> isFirstMove [ 
-
-"Transcript show: self square file;cr."
-
-  ^ (self isWhite 
-			ifTrue: [self square file = $2] 
-			ifFalse: [self square file = $7])
-
-
-]
-
 { #category : 'path commands' }
 MyPawn >> moveTo: aSquare [ 
-    "Déplace le pion sur une nouvelle case et met à jour son état."
-   " super moveTo: aSquare.
-    aSquare contents: self."
-	state moveTo: aSquare for: self.
-	
+ 
+ | legalMoves |
+    legalMoves := self targetSquaresLegal: self.
+    (legalMoves includes: aSquare)
+        ifTrue: [ state moveTo: aSquare for: self ].
 ]
 
 { #category : 'rendering' }
@@ -93,6 +81,15 @@ MyPawn >> state: aState [
 ]
 
 { #category : 'rendering' }
-MyPawn >> targetSquaresLegal: aBoolean [ 
-        ^ state targetSquaresLegal: self.
+MyPawn >> targetSquaresLegal: aBoolean [
+  
+	 | standardmove captureDiagonalPawn |
+	
+	standardmove := state targetSquaresLegal: self.
+	
+	captureDiagonalPawn := self diagonalPawnCaptures.
+	
+
+	^ standardmove, captureDiagonalPawn 
+	
 ]

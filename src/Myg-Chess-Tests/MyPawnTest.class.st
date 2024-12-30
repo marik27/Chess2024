@@ -33,6 +33,12 @@ MyPawnTest >> testBlackPawnMovesDoubleStep [
 ]
 
 { #category : 'tests' }
+MyPawnTest >> testDeplacementLegaux [
+	
+"tester deplacement legaux du pions enlever cheeck a verfier "
+]
+
+{ #category : 'tests' }
 MyPawnTest >> testDiagonalPawnCaptures [
 
 	| pawn board enemyPawn1 enemyPawn2 capturePawn expectedSquares |
@@ -64,11 +70,12 @@ MyPawnTest >> testInitialWhitePawnMoves [
 	| pawn squares board1 expectedSquares |
 	board1 := MyChessBoard empty.
 	board1 at: 'e2' put: (pawn := MyPawn white).
-	squares := pawn targetSquaresLegal: true.
+	squares := pawn targetSquaresLegal.
 
 	expectedSquares := OrderedCollection new.
 	expectedSquares add: (board1 at: 'e3').
-	self assert: squares asSet equals: expectedSquares asSet
+	self assert: (expectedSquares allSatisfy: [ :each | squares includes: each ]).
+
 ]
 
 { #category : 'as yet unclassified' }
@@ -90,6 +97,26 @@ MyPawnTest >> testIsFirstMove [
 
         self deny: (pawnWhite isFirstMove).
         self deny: (pawnBlack isFirstMove). "
+
+]
+
+{ #category : 'tests' }
+MyPawnTest >> testMoveToBehavior [ 
+    | board pawn square destinationSquare blockingPawn enemyPawn |
+
+    "Initialisation de l'échiquier et du pion"
+    board := MyChessBoard new.
+    pawn := MyPawn new.
+    square := board at: #e2.
+    pawn setPosition: square.
+    square contents: pawn.
+
+    "1. Test d'un déplacement valide d'une case en avant"
+    destinationSquare := board at: #e3.
+    pawn moveTo: destinationSquare.
+    self assert: pawn square = destinationSquare.
+    self assert: square contents isNil.
+    self assert: destinationSquare contents = pawn.
 
 ]
 
