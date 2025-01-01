@@ -82,22 +82,14 @@ MyPawn >> state: aState [
 
 { #category : 'rendering' }
 MyPawn >> targetSquaresLegal: aBoolean [
+  
+	 | standardmove captureDiagonalPawn |
+	
+	standardmove := state targetSquaresLegal: self.
+	
+	captureDiagonalPawn := self diagonalPawnCaptures.
+	
 
-    ^ (self isWhite
-        ifTrue: [ 
-            square ifNotNil: [ 
-                { square up ifNotNil: [ :sq | sq ] } 
-            ] ifNil: [ #() ] 
-        ]
-        ifFalse: [
-            square ifNotNil: [ 
-                { square down ifNotNil: [ :sq | sq ] } 
-            ] ifNil: [ #() ] 
-        ]
-    ) select: [ :s |
-        s notNil and: [
-            s hasPiece not or: [ s contents color ~= color ]
-        ]
-    ].
-
+	^ standardmove, captureDiagonalPawn 
+	
 ]

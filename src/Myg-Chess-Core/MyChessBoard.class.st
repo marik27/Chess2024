@@ -191,6 +191,7 @@ MyChessBoard >> initializePieces [
 
 { #category : 'initialization' }
 MyChessBoard >> initializePiecesWithSize: size [
+
     | columnRange firstRow secondRow penultimateRow lastRow square position piece |
 
     "Définir dynamiquement les lignes importantes"
@@ -299,7 +300,8 @@ MyChessBoard >> initializeSquares [
 { #category : 'initialization' }
 MyChessBoard >> initializeSquaresWithSize: size [
     "Initialise un plateau de taille donnée avec une alternance correcte des couleurs"
-    | black |
+
+   | black |
     black := false.
 
     ($a asciiValue) to: ($a asciiValue + size - 1) do: [:column |
@@ -340,7 +342,7 @@ MyChessBoard >> initializeSquaresWithSize: size [
 
 { #category : 'initialization' }
 MyChessBoard >> initializeWithSize: size [
-    super initialize.
+   super initialize.
 
 	super initialize.
 

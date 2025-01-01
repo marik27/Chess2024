@@ -87,6 +87,7 @@ MyPiece >> downFile [
 
 { #category : 'rendering' }
 MyPiece >> downFileLegal: aBoolean [
+
     ^ self collectSquares: [ :aSquare | 
         aSquare ifNotNil: [ aSquare down ] 
     ] legal: aBoolean
@@ -101,6 +102,7 @@ MyPiece >> downLeftDiagonal [
 
 { #category : 'rendering' }
 MyPiece >> downLeftDiagonalLegal: aBoolean [
+
 	^ self
 		  collectSquares: [ :aSquare | 
 		      (aSquare notNil and: [ aSquare down notNil ]) 
@@ -120,6 +122,7 @@ MyPiece >> downRightDiagonal [
 MyPiece >> downRightDiagonalLegal: aBoolean [
 
 	^ self
+	
 		  collectSquares: [ :aSquare | 
 		      (aSquare notNil and: [ aSquare down notNil ]) 
 		          ifTrue: [ aSquare down right ] 
@@ -160,6 +163,7 @@ MyPiece >> leftFile [
 
 { #category : 'rendering' }
 MyPiece >> leftFileLegal: aBoolean [
+
 	^ self collectSquares: [ :aSquare | 
         aSquare ifNotNil: [ aSquare left ] 
     ] legal: aBoolean
@@ -227,6 +231,7 @@ MyPiece >> upFile [
 
 { #category : 'rendering' }
 MyPiece >> upFileLegal: aBoolean [
+
     ^ self collectSquares: [ :aSquare | 
         aSquare ifNotNil: [ aSquare up ] 
     ] legal: aBoolean
@@ -241,7 +246,6 @@ MyPiece >> upLeftDiagonal [
 
 { #category : 'rendering' }
 MyPiece >> upLeftDiagonalLegal: aBoolean [
-
 
 	^ self
 		  collectSquares: [ :aSquare | 
@@ -267,5 +271,4 @@ MyPiece >> upRightDiagonalLegal: aBoolean [
 		          ifTrue: [ aSquare up right ]
 		          ifFalse: [ nil ]
 		  ] legal: aBoolean
-
 ]
