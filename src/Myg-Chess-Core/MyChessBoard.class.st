@@ -111,8 +111,13 @@ MyChessBoard >> initialize [
 	self constraintsDo: [ :aLayoutConstraints |
 		aLayoutConstraints horizontal fitContent.
 		aLayoutConstraints vertical fitContent ].
+	
+self initializeWithSize: 9.
 
-	self initializeSquares
+
+
+	
+
 ]
 
 { #category : 'initialization' }
@@ -133,8 +138,7 @@ MyChessBoard >> initializeFromFENBoard: aFENBoard [
 
 { #category : 'initialization' }
 MyChessBoard >> initializePieces [
-
-	| black |
+| black |
 	black := false.
 	$a asciiValue to: $h asciiValue do: [ :column |
 		8 to: 1 by: -1 do: [ :file |
@@ -172,7 +176,7 @@ MyChessBoard >> initializePieces [
 	$a asciiValue to: $h asciiValue do: [ :column |
 		self at: column asCharacter asString , '2' put: MyPawn white ].
 
-	self at: 'a8' put: MyRook black.
+	self at: 'a9' put: MyRook black.
 	self at: 'b8' put: MyKnight black.
 	self at: 'c8' put: MyBishop black.
 	self at: 'd8' put: MyQueen black.
@@ -183,6 +187,81 @@ MyChessBoard >> initializePieces [
 
 	$a asciiValue to: $h asciiValue do: [ :column |
 		self at: column asCharacter asString , '7' put: MyPawn black ]
+]
+
+{ #category : 'initialization' }
+MyChessBoard >> initializePiecesWithSize: size [
+    | columnRange firstRow secondRow penultimateRow lastRow square position piece |
+
+    "Définir dynamiquement les lignes importantes"
+    columnRange := ($a asciiValue) to: ($a asciiValue + size - 1).
+    firstRow := 1.
+    secondRow := 2.
+    penultimateRow := size - 1.
+    lastRow := size.
+
+    "✅ Placement des pièces blanches (1ère ligne)"
+    columnRange withIndexDo: [ :columnAscii :index |
+        position := (columnAscii asCharacter asString), firstRow asString.
+        square := grid at: position ifAbsent: [ 
+            self error: 'Position ', position, ' introuvable dans grid.' 
+        ].
+        piece := (index caseOf: {
+            [1] -> [ MyRook white ].
+            [2] -> [ MyKnight white ].
+            [3] -> [ MyBishop white ].
+            [(size // 2)] -> [ MyQueen white ].
+            [(size // 2) + 1] -> [ MyKing white ].
+            [(size - 2)] -> [ MyBishop white ].
+            [(size - 1)] -> [ MyKnight white ].
+            [size] -> [ MyRook white ].
+        } otherwise: [ nil ]).
+        square contents: piece.
+        piece ifNotNil: [ piece square: square ].
+    ].
+
+    "✅ Placement des pions blancs (2ème ligne)"
+    columnRange do: [ :columnAscii |
+        position := (columnAscii asCharacter asString), secondRow asString.
+        square := grid at: position ifAbsent: [
+            self error: 'Position ', position, ' introuvable dans grid.'
+        ].
+        piece := MyPawn white.
+        square contents: piece.
+        piece ifNotNil: [ piece square: square ].
+    ].
+
+    "✅ Placement des pions noirs (avant-dernière ligne)"
+    columnRange do: [ :columnAscii |
+        position := (columnAscii asCharacter asString), penultimateRow asString.
+        square := grid at: position ifAbsent: [
+            self error: 'Position ', position, ' introuvable dans grid.'
+        ].
+        piece := MyPawn black.
+        square contents: piece.
+        piece ifNotNil: [ piece square: square ].
+    ].
+
+    "✅ Placement des pièces noires (dernière ligne)"
+    columnRange withIndexDo: [ :columnAscii :index |
+        position := (columnAscii asCharacter asString), lastRow asString.
+        square := grid at: position ifAbsent: [
+            self error: 'Position ', position, ' introuvable dans grid.'
+        ].
+        piece := (index caseOf: {
+            [1] -> [ MyRook black ].
+            [2] -> [ MyKnight black ].
+            [3] -> [ MyBishop black ].
+            [(size // 2)] -> [ MyQueen black ].
+            [(size // 2) + 1] -> [ MyKing black ].
+            [(size - 2)] -> [ MyBishop black ].
+            [(size - 1)] -> [ MyKnight black ].
+            [size] -> [ MyRook black ].
+        } otherwise: [ nil ]).
+        square contents: piece.
+        piece ifNotNil: [ piece square: square ].
+    ].
+
 ]
 
 { #category : 'initialization' }
@@ -215,6 +294,75 @@ MyChessBoard >> initializeSquares [
 			grid at: squareNotation put: square.
 			self addChild: square ].
 		black := black not ]
+]
+
+{ #category : 'initialization' }
+MyChessBoard >> initializeSquaresWithSize: size [
+    "Initialise un plateau de taille donnée avec une alternance correcte des couleurs"
+    | black |
+    black := false.
+
+    ($a asciiValue) to: ($a asciiValue + size - 1) do: [:column |
+        size to: 1 by: -1 do: [:row |
+            | squareNotation square expectedColor |
+
+            "Créer la notation de la case (ex: 'a1', 'b2', ...)"
+            squareNotation := column asCharacter asString , row asString.
+
+            "Alterner la couleur basée sur la somme des indices de ligne et colonne"
+            expectedColor := ((column - $a asciiValue + row) odd
+                ifTrue: [ Color black ]
+                ifFalse: [ Color white ]).
+
+            "Créer la case avec la couleur calculée"
+            square := MyChessSquare basicNew
+                        color: expectedColor;
+                        board: self;
+                        initialize;
+                        contents: nil;
+                        yourself.
+
+            "Assigner le nom et ajouter au tableau"
+            square name: squareNotation.
+            
+            "Vérifier si la case est valide avant de l'ajouter"
+            grid at: squareNotation put: square.
+            (square isKindOf: MyChessSquare) ifTrue: [
+                self addChild: square.
+            ] ifFalse: [
+                self error: 'Erreur lors de l’ajout de la case ', squareNotation.
+            ].
+        ].
+        black := black not.
+    ].
+
+]
+
+{ #category : 'initialization' }
+MyChessBoard >> initializeWithSize: size [
+    super initialize.
+
+	super initialize.
+
+	self blackColor: Color blue.
+	self whiteColor: Color orange.
+
+	state := MyUnselectedState board: self.
+	grid := Dictionary new.
+
+	self background: (BlBackground paint: Color veryVeryLightGray).
+	self layout: (BlGridLayout vertical
+			 cellSpacing: 5;
+			 columnCount: size;
+			 rowCount: size;
+			 yourself).
+	self constraintsDo: [ :aLayoutConstraints |
+		aLayoutConstraints horizontal fitContent.
+		aLayoutConstraints vertical fitContent ].
+	
+    self initializeSquaresWithSize: size.
+    self initializePiecesWithSize: size.
+
 ]
 
 { #category : 'accessing' }

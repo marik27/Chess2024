@@ -13,18 +13,18 @@ MyKing >> attackingSquares [
 
 { #category : 'rendering' }
 MyKing >> basicTargetSquares [
+    "The king can move one square in each direction, including diagonals"
+    ^ {
+        (square ifNotNil: [ square right ]).
+        (square ifNotNil: [ square up ifNotNil: [ :sq | sq right ] ]).
+        (square ifNotNil: [ square up ]).
+        (square ifNotNil: [ square up ifNotNil: [ :sq | sq left ] ]).
+        (square ifNotNil: [ square left ]).
+        (square ifNotNil: [ square left ifNotNil: [ :sq | sq down ] ]).
+        (square ifNotNil: [ square down ]).
+        (square ifNotNil: [ square down ifNotNil: [ :sq | sq right ] ])
+    } select: [:s | s notNil].
 
-	"The king can move one square on each direction including diagonals"
-	^ {
-		square ifNotNil: #right.
-		square up ifNotNil: #right.
-		square ifNotNil: #up.
-		square up ifNotNil: #left.
-		square ifNotNil: #left.
-		square left ifNotNil: #down.
-		square ifNotNil: #down.
-		square down ifNotNil: #right
-	}
 ]
 
 { #category : 'accessing' }

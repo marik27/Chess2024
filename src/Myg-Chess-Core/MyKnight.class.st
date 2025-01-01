@@ -19,16 +19,17 @@ MyKnight >> renderPieceOn: aSquare [
 
 { #category : 'rendering' }
 MyKnight >> targetSquaresLegal: aBoolean [
+    ^ {
+        (square ifNotNil: [ square right ifNotNil: [ :p | p right ifNotNil: [ p up ] ] ]).
+        (square ifNotNil: [ square right ifNotNil: [ :p | p right ifNotNil: [ p down ] ] ]).
+        (square ifNotNil: [ square left ifNotNil: [ :p | p left ifNotNil: [ p up ] ] ]).
+        (square ifNotNil: [ square left ifNotNil: [ :p | p left ifNotNil: [ p down ] ] ]).
+        (square ifNotNil: [ square up ifNotNil: [ :p | p up ifNotNil: [ p left ] ] ]).
+        (square ifNotNil: [ square up ifNotNil: [ :p | p up ifNotNil: [ p right ] ] ]).
+        (square ifNotNil: [ square down ifNotNil: [ :p | p down ifNotNil: [ p left ] ] ]).
+        (square ifNotNil: [ square down ifNotNil: [ :p | p down ifNotNil: [ p right ] ] ])
+    } select: [ :s |
+        s notNil and: [ s hasPiece not or: [ s contents color ~= color ] ]
+    ]
 
-	^ {
-		  (square right ifNotNil: [ :p | p right ifNotNil: #up ]).
-		  (square right ifNotNil: [ :p | p right ifNotNil: #down ]).
-		  (square left ifNotNil: [ :p | p left ifNotNil: #up ]).
-		  (square left ifNotNil: [ :p | p left ifNotNil: #down ]).
-		  (square up ifNotNil: [ :p | p up ifNotNil: #left ]).
-		  (square up ifNotNil: [ :p | p up ifNotNil: #right ]).
-		  (square down ifNotNil: [ :p | p down ifNotNil: #left ]).
-		  (square down ifNotNil: [ :p | p down ifNotNil: #right ]) }
-		  select: [ :s |
-			  s notNil and: [ s hasPiece not or: [ s contents color ~= color ] ] ]
 ]
