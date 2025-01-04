@@ -176,7 +176,7 @@ MyChessBoard >> initializePieces [
 	$a asciiValue to: $h asciiValue do: [ :column |
 		self at: column asCharacter asString , '2' put: MyPawn white ].
 
-	self at: 'a9' put: MyRook black.
+	self at: 'a8' put: MyRook black.
 	self at: 'b8' put: MyKnight black.
 	self at: 'c8' put: MyBishop black.
 	self at: 'd8' put: MyQueen black.
@@ -208,13 +208,7 @@ MyChessBoard >> initializePiecesWithSize: size [
             self error: 'Position ', position, ' introuvable dans grid.' 
         ].
         piece := (index caseOf: {
-            [1] -> [ MyRook white ].
-            [2] -> [ MyKnight white ].
-            [3] -> [ MyBishop white ].
-            [(size // 2)] -> [ MyQueen white ].
-            [(size // 2) + 1] -> [ MyKing white ].
-            [(size - 2)] -> [ MyBishop white ].
-            [(size - 1)] -> [ MyKnight white ].
+         
             [size] -> [ MyRook white ].
         } otherwise: [ nil ]).
         square contents: piece.
@@ -255,9 +249,10 @@ MyChessBoard >> initializePiecesWithSize: size [
             [3] -> [ MyBishop black ].
             [(size // 2)] -> [ MyQueen black ].
             [(size // 2) + 1] -> [ MyKing black ].
-            [(size - 2)] -> [ MyBishop black ].
-            [(size - 1)] -> [ MyKnight black ].
-            [size] -> [ MyRook black ].
+           	[(size // 2) + 2] -> [ MyBishop black ].
+            [(size - 2)] -> [ MyKnight black ].
+            [(size - 1)] -> [ MyRook black ].
+				[size] -> [ MyRook black ].
         } otherwise: [ nil ]).
         square contents: piece.
         piece ifNotNil: [ piece square: square ].
