@@ -1,12 +1,12 @@
 Class {
-	#name : 'TargetSquareLegalTests',
+	#name : 'TargetSquareLegalTest',
 	#superclass : 'TestCase',
 	#category : 'Myg-Chess-Tests',
 	#package : 'Myg-Chess-Tests'
 }
 
 { #category : 'tests' }
-TargetSquareLegalTests >> testTargetSquaresExcludesNil [
+TargetSquareLegalTest >> testTargetSquaresExcludesNil [
 
 	| king squares board |
 	board := MyChessBoard empty.
@@ -20,7 +20,7 @@ TargetSquareLegalTests >> testTargetSquaresExcludesNil [
 ]
 
 { #category : 'tests' }
-TargetSquareLegalTests >> testTargetSquaresExcludesNullSquare [
+TargetSquareLegalTest >> testTargetSquaresExcludesNullSquare [
 
 	| king squares board |
 	board := MyChessBoard empty.
