@@ -54,9 +54,20 @@ MyFENGame >> moveCount: anInteger [
 MyFENGame >> ranks: aCollection [
 
 	board := Dictionary new.
-	aCollection reversed with: (1 to: 8) do: [ :rankPieces :rank |
-		rankPieces with: ($a to: $h) do: [ :piece :column |
-			board at: column asString , rank asString put: piece ] ]
+	aCollection reversed with: (1 to: aCollection size) do: [:rankPieces :rank |
+    "Vérification que la taille des pièces correspond au nombre de colonnes attendues"
+    (rankPieces size = ($a asciiValue to: ($a asciiValue + rankPieces size - 1)) size) ifFalse: [
+        self error: 'Taille des pièces et colonnes ne correspondent pas à la ligne ', rank asString.
+    ].
+    
+    "Boucle sur chaque pièce et colonne"
+    rankPieces withIndexDo: [:piece :index |
+        | column |
+        column := (($a asciiValue + index - 1) asCharacter) asString.
+        board at: column , rank asString put: piece.
+    ].
+].
+
 ]
 
 { #category : 'accessing' }

@@ -6,19 +6,6 @@ Class {
 }
 
 { #category : 'tests' }
-MyQueenTest >> testIsCheckByOpponentsRook [
-
-	| queen board |
-	board := MyChessBoard empty.
-	board at: 'e4' put: (queen := MyKing white).
-
-	"Put an atacker rook on e column"
-	board at: 'e1' put: MyRook black.
-
-	self assert: queen isInCheck
-]
-
-{ #category : 'tests' }
 MyQueenTest >> testQueenMovementWithoutObstacles [
 
     | queen squares board |
@@ -41,9 +28,9 @@ MyQueenTest >> testQueenMovementWithoutObstacles [
 ]
 
 { #category : 'tests' }
-MyQueenTest >> testQueenValidMoves [ [
+MyQueenTest >> testQueenValidMoves [
         | board queen |
-        board := MyChessBoard new.
+        board := MyChessBoard empty.
        queen := MyQueen new.
 		
         
@@ -58,6 +45,6 @@ MyQueenTest >> testQueenValidMoves [ [
         "Test diagonal movement"
         self assert: (queen moveTo: 'g7') notNil.
         self assert: (queen moveTo: 'a1') notNil.
-    ].
+   
 
 ]

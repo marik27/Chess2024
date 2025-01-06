@@ -8,7 +8,9 @@ Class {
 		'state',
 		'whiteColor',
 		'blackColor',
-		'game'
+		'game',
+		'size',
+		'queenPositions'
 	],
 	#category : 'Myg-Chess-Core',
 	#package : 'Myg-Chess-Core'
@@ -73,6 +75,23 @@ MyChessBoard >> click: aMyChessSquare [
 	state := state clickOn: aMyChessSquare
 ]
 
+{ #category : 'as yet unclassified' }
+MyChessBoard >> displaySolution: solution [
+    "Affiche une solution valide de N reines sur le plateau en utilisant at:put:"
+
+    1 to: solution size do: [:row |
+        | col coordinate |
+        col := solution at: row.
+        coordinate := (Character value: ($a asciiValue + col - 1)) asString , row asString.
+
+        (grid includesKey: coordinate) ifTrue: [
+            self at: coordinate put: (MyQueen white).
+        ] ifFalse: [
+            Transcript show: 'Erreur : Case ', coordinate, ' introuvable dans grid'; cr.
+        ].
+    ].
+]
+
 { #category : 'accessing' }
 MyChessBoard >> game [
 
@@ -95,7 +114,6 @@ MyChessBoard >> highLightTargets: squares [
 MyChessBoard >> initialize [
 
 	super initialize.
-
 	self blackColor: Color blue.
 	self whiteColor: Color orange.
 
@@ -112,28 +130,33 @@ MyChessBoard >> initialize [
 		aLayoutConstraints horizontal fitContent.
 		aLayoutConstraints vertical fitContent ].
 	
-self initializeWithSize: 9.
-
-
-
-	
+	self initializeWithSize: 9.
+	self solveNQueens: 9.
 
 ]
 
 { #category : 'initialization' }
 MyChessBoard >> initializeFromFENBoard: aFENBoard [
 
-	aFENBoard keysAndValuesDo: [ :k :v |
-		v ~= 'empty' ifTrue: [
-			| substrings color piece |
-			substrings := v substrings.
-			color := substrings first.
-			piece := substrings second.
-			self
-				at: k
-				put:
-					((self class environment at: ('My' , piece capitalized) asSymbol)
-						 perform: color asLowercase asSymbol) ] ]
+    "Parcourir les clés et valeurs pour placer les pièces"
+    aFENBoard keysAndValuesDo: [ :k :v |
+        v ~= 'empty' ifTrue: [
+            | substrings color piece |
+            substrings := v substrings.
+            color := substrings first.
+            piece := substrings second.
+            (grid includesKey: k) ifTrue: [
+                self
+                    at: k
+                    put:
+                        ((self class environment at: ('My' , piece capitalized) asSymbol)
+                                perform: color asLowercase asSymbol)
+            ] ifFalse: [
+                Transcript show: 'Position ', k, ' en dehors des limites de 9x9'; cr.
+            ].
+        ]
+    ].
+
 ]
 
 { #category : 'initialization' }
@@ -263,7 +286,7 @@ MyChessBoard >> initializePiecesWithSize: size [
 { #category : 'initialization' }
 MyChessBoard >> initializeSquares [
 
-	| black |
+	"| black |
 	black := false.
 	$a asciiValue to: $h asciiValue do: [ :column |
 		8 to: 1 by: -1 do: [ :file |
@@ -289,7 +312,7 @@ MyChessBoard >> initializeSquares [
 			square name: squareNotation.
 			grid at: squareNotation put: square.
 			self addChild: square ].
-		black := black not ]
+		black := black not ]"
 ]
 
 { #category : 'initialization' }
@@ -359,6 +382,19 @@ MyChessBoard >> initializeWithSize: size [
 	
     self initializeSquaresWithSize: size.
     self initializePiecesWithSize: size.
+]
+
+{ #category : 'testing' }
+MyChessBoard >> isSafeAtRow: row column: col board: board [ 
+    "Vérifie si une reine peut être placée en toute sécurité."
+    1 to: row - 1 do: [:r |
+        | c |
+        c := board at: r.
+        c ifNotNil: [
+            (c = col or: [(c - col) abs = (r - row) abs]) ifTrue: [^false]
+        ].
+    ].
+    ^true
 
 ]
 
@@ -366,6 +402,21 @@ MyChessBoard >> initializeWithSize: size [
 MyChessBoard >> pieces [
 	
 	^ children collect: [ :square | square contents ]
+]
+
+{ #category : 'as yet unclassified' }
+MyChessBoard >> placeQueenOnRow: row board: board size: size solutions: solutions [
+    row > size ifTrue: [
+        solutions add: board copy.
+        ^self
+    ].
+    1 to: size do: [:col |
+        (self isSafeAtRow: row column: col board: board) ifTrue: [
+            board at: row put: col.
+            self placeQueenOnRow: row + 1 board: board size: size solutions: solutions.
+            board at: row put: nil.
+        ]
+    ].
 ]
 
 { #category : 'accessing' }
@@ -378,6 +429,24 @@ MyChessBoard >> select: aSquare [
 MyChessBoard >> selected: aMyChessSquare [ 
 	
 	selected := aMyChessSquare
+]
+
+{ #category : 'as yet unclassified' }
+MyChessBoard >> solveNQueens: size [ 
+    "Résout le problème des N reines pour un échiquier de taille donnée et affiche une solution."
+
+    | board solutions |
+    board := Array new: size.
+    solutions := OrderedCollection new.
+    self placeQueenOnRow: 1 board: board size: size solutions: solutions.
+    
+    "Afficher la première solution trouvée"
+    solutions isEmpty ifFalse: [
+        self displaySolution: solutions first.
+        Transcript show: 'Solution trouvée et affichée.'; cr.
+    ] ifTrue: [
+        Transcript show: 'Aucune solution trouvée.'; cr.
+    ].
 ]
 
 { #category : 'highlighting' }

@@ -56,6 +56,22 @@ MyChessGame >> checkForMate [
 	blackPlayer king isCheckMated ifTrue: [ self halt: 'White wins!' ].
 ]
 
+{ #category : 'as yet unclassified' }
+MyChessGame >> fenAsDictionary [
+    "Convertit les informations du jeu FEN en dictionnaire pour le placement des pièces."
+    | boardDictionary  board|
+    boardDictionary := Dictionary new.
+board := MyChessBoard.
+     board do: [ :pieceInfo |
+        | position piece |
+        position := pieceInfo key.
+        piece := pieceInfo value.
+        boardDictionary at: position put: piece.
+    ].
+    ^ boardDictionary
+
+]
+
 { #category : 'initialization' }
 MyChessGame >> initialize [
 
@@ -121,6 +137,56 @@ MyChessGame >> initializeFromFENGame: aFENGame [
 	self constraintsDo: [ :aLayoutConstraints |
 		aLayoutConstraints horizontal fitContent.
 		aLayoutConstraints vertical fitContent ]
+]
+
+{ #category : 'initialization' }
+MyChessGame >> initializeFromFENGame: aFENGame size: size [
+    "Initialise le jeu avec une représentation FEN et une taille dynamique."
+
+    | button infoPane |
+    aFENGame sideToMove = 'White'
+        ifTrue: [ currentPlayer := whitePlayer ]
+        ifFalse: [ currentPlayer := blackPlayer ].
+        
+    moveCount := aFENGame moveCount.
+
+    "Initialisation du plateau avec une taille dynamique"
+    board := MyChessBoard new.
+    board initializeWithSize: size.
+    board initializeFromFENBoard: (aFENGame fenAsDictionary) size: size.
+    board game: self.
+
+    "Ajout du bouton de jeu"
+    button := ToButton new.
+    button labelText: 'Play!'.
+    button whenClickedDo: [ self play ].
+    
+    "Panneau d'informations"
+    infoPane := ToElement new.
+    infoPane constraintsDo: [ :c | 
+        c vertical fitContent.
+        c horizontal matchParent ].
+    infoPane layout: BlLinearLayout vertical.
+    infoPane layout cellSpacing: 10.
+    infoPane margin: (BlInsets all: 20).
+    infoPane matchParent.
+    
+    "Affichage des mouvements"
+    movesLabel := ToLabel new beMultiLine.
+    movesLabel matchParent.
+
+    "Ajout des composants au jeu"
+    self addChild: board.
+    self addChild: infoPane.
+    infoPane addChild: movesLabel.
+    infoPane addChild: button.
+
+    "Mise en page"
+    self layout: BlLinearLayout horizontal.
+    self constraintsDo: [ :aLayoutConstraints |
+        aLayoutConstraints horizontal fitContent.
+        aLayoutConstraints vertical fitContent ].
+
 ]
 
 { #category : 'public' }
