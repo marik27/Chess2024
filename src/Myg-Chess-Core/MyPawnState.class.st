@@ -9,9 +9,14 @@ Class {
 }
 
 { #category : 'as yet unclassified' }
-MyPawnState >> diagonalPawnCaptures: aPawn [
-	
-	  self subclassResponsibility.
+MyPawnState >> moveTo: aSquare for: aPawn [ 
+ self subclassResponsibility
+    
+]
+
+{ #category : 'accessing' }
+MyPawnState >> pawn [
+^pawn
 ]
 
 { #category : 'accessing' }
