@@ -105,7 +105,9 @@ MyChessSquare >> contents: aPiece [
 { #category : 'api - configuration' }
 MyChessSquare >> down [
 
-	^ self + (0 @ -1)
+	| nextSquare |
+    nextSquare := self + (0 @ -1).
+    ^ nextSquare isNullSquare ifTrue: [ NullSquare new ] ifFalse: [ nextSquare ]
 ]
 
 { #category : 'asd' }
@@ -172,7 +174,10 @@ MyChessSquare >> initialize [
 { #category : 'accessing' }
 MyChessSquare >> left [
 
-	^ self + (-1 @ 0)
+	  | nextSquare |
+    nextSquare := self + (-1 @ 0).
+    ^ nextSquare isNullSquare ifTrue: [ NullSquare new ] ifFalse: [ nextSquare ]
+
 ]
 
 { #category : 'accessing' }
@@ -282,8 +287,10 @@ MyChessSquare >> renderRook: aPiece [
 
 { #category : 'accessing' }
 MyChessSquare >> right [
-	
-	^ self + (1@0)
+
+	| nextSquare |
+    nextSquare := self + (1 @ 0).
+    ^ nextSquare isNullSquare ifTrue: [ NullSquare new ] ifFalse: [ nextSquare ]
 ]
 
 { #category : 'initialization' }
@@ -306,6 +313,10 @@ MyChessSquare >> unselect [
 
 { #category : 'instance creation' }
 MyChessSquare >> up [
-	
-	^ self + (0@1)
+
+	| nextSquare |
+	nextSquare := self + (0 @ 1).
+	^ nextSquare isNullSquare
+		  ifTrue: [ NullSquare new ]
+		  ifFalse: [ nextSquare ]
 ]
