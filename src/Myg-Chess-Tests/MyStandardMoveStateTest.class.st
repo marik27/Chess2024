@@ -6,7 +6,68 @@ Class {
 }
 
 { #category : 'tests' }
-MyStandardMoveStateTest >> testCaptureEnPassant [ 
+MyStandardMoveStateTest >> testBlackPawnSingleStepDown [
+" test deplacement d'un pion noir ( vers le bas ) en etat  standard"
+    | board blackPawn initialSquare legalSquare legalMoves |
+
+
+    board := MyChessBoard empty.
+    initialSquare := board at: #e7.
+    legalSquare   := board at: #e6.
+
+    blackPawn := MyPawn black.
+    blackPawn setPosition: initialSquare.
+    initialSquare contents: blackPawn.
+
+    self assert: initialSquare contents equals: blackPawn.
+    legalMoves := blackPawn targetSquaresLegal: blackPawn.
+    self assert: (legalMoves includes: legalSquare).
+
+
+    board at: #e6 put: (MyPawn white).
+    legalMoves := blackPawn targetSquaresLegal: blackPawn.
+    self deny: (legalMoves includes: legalSquare).
+
+
+
+]
+
+{ #category : 'tests' }
+MyStandardMoveStateTest >> testCaptureEnPassantBlackPawn [
+    | board blackPawn whitePawn blackPawnSquare adjacentSquare captureSquare |
+
+
+    board := MyChessBoard empty.
+    blackPawnSquare := board at: #e4.  
+    adjacentSquare := board at: #d4.
+    captureSquare := board at: #d3.
+
+    blackPawn := MyPawn black.
+    blackPawn state: MyStandardMoveState new.
+    blackPawn setPosition: blackPawnSquare.
+    blackPawnSquare contents: blackPawn.
+
+    whitePawn := MyPawn white.
+    whitePawn state: MyEnPassantState new.
+    whitePawn setPosition: adjacentSquare.
+    adjacentSquare contents: whitePawn.
+
+
+    Transcript show: 'Pion noir en ', blackPawnSquare printString, ' / Pion blanc (En Passant) en ', adjacentSquare printString; cr.
+
+
+    blackPawn captureEnPassantTo: captureSquare.
+
+    self assert: adjacentSquare contents isNil.        
+    self assert: blackPawn square equals: captureSquare. 
+    self assert: captureSquare contents equals: blackPawn.
+
+    Transcript show: 'Capture en passant réussie : Pion noir déplacé à ', captureSquare printString; cr.
+
+]
+
+{ #category : 'tests' }
+MyStandardMoveStateTest >> testCaptureEnPassantwhitePawn [ 
     | board pawn opponentPawn Square leftSquare captureSquare |
 
 
@@ -33,49 +94,55 @@ MyStandardMoveStateTest >> testCaptureEnPassant [
 ]
 
 { #category : 'tests' }
-MyStandardMoveStateTest >> testCaptureNormalAfterEnPassant [ 
-    | board pawn opponentPawn Square1 leftSquare captureSquare normalCaptureSquare pawn2 expectedSquares|
-
+MyStandardMoveStateTest >> testCaptureNormalAfterEnPassant [
+    | board whitePawn blackPawnEnPassant blackPawnNormal e5 EnPassantSquare EnPassantCaptureSquare captureStandardSquare |
 
     board := MyChessBoard empty.
-    Square1:= board at: #e5.
-    leftSquare := board  at: #d5. 
-    captureSquare := board at: #d6. 
+    e5 := board at: #e5.  
+    EnPassantSquare := board at: #d5. 
+    EnPassantCaptureSquare := board at: #d6.  
+    captureStandardSquare := board at: #e7.  
 
-    pawn := MyPawn white.
-    pawn state: MyStandardMoveState new.
-    pawn setPosition: Square1.
+    whitePawn := MyPawn white.
+    whitePawn state: MyStandardMoveState new.
+    whitePawn setPosition: e5.       
+    e5 contents: whitePawn.         
 
-    opponentPawn := MyPawn black .
-    opponentPawn state: MyEnPassantState new.
-    opponentPawn setPosition: leftSquare.
-    leftSquare contents: opponentPawn.
+  
+    blackPawnEnPassant := MyPawn black.
+    blackPawnEnPassant state: MyEnPassantState new.
+    blackPawnEnPassant setPosition: EnPassantSquare.
+    EnPassantSquare contents: blackPawnEnPassant.
 
-    pawn captureEnPassantTo: captureSquare.
+    
+    self assert: e5 contents equals: whitePawn.
+    self assert: EnPassantSquare contents equals: blackPawnEnPassant.
 
-    self assert: leftSquare contents isNil.
-    self assert: pawn square equals: captureSquare.
-    self assert: captureSquare contents equals: pawn.
+    "capture En Passant"
+    whitePawn moveTo: EnPassantCaptureSquare.  
 
-	    Transcript show: 'Capture En Passant réussie. Pion blanc en ', captureSquare printString; cr.
+    self assert: e5 contents isNil.                  
+    self assert: EnPassantSquare contents isNil.                  
+    self assert: EnPassantCaptureSquare contents equals: whitePawn.     
 
-    "Repositionner le pion pour tester une capture normale."
-	 normalCaptureSquare:= board at: #e7 put: (pawn2:= MyPawn black).
-	   normalCaptureSquare contents: pawn2.
-	self assert: normalCaptureSquare contents equals: pawn2.
-	 Transcript show: 'Pion noir positionné pour une capture normale en ', normalCaptureSquare printString; cr.
-	
-    pawn diagonalPawnCaptures.
-	expectedSquares := OrderedCollection new.
-	expectedSquares add: (normalCaptureSquare).  
-	self assert: (pawn diagonalPawnCaptures) asSet equals: expectedSquares asSet.
-	    Transcript show: 'Captures diagonales possibles : ', (pawn diagonalPawnCaptures printString); cr.
-	
-	pawn moveTo: normalCaptureSquare.
-	self assert: normalCaptureSquare contents equals: pawn. 
- 	self assert: captureSquare emptyContents . 
-   
-    Transcript show: 'Capture normale réussie. Pion blanc déplacé en ', normalCaptureSquare printString; cr.
+    Transcript cr; show: 'En Passant réussi : pion blanc en d6.'; cr.
+
+    " la capture enDiagonale"
+    blackPawnNormal := MyPawn black.
+    blackPawnNormal state: MyStandardMoveState new.
+    blackPawnNormal setPosition: captureStandardSquare.
+    captureStandardSquare contents: blackPawnNormal.
+
+    self assert: captureStandardSquare contents equals: blackPawnNormal.
+
+    Transcript cr; show: 'Pion noir placé pour capture normale en e7.'; cr.
+
+    whitePawn moveTo: captureStandardSquare.  
+
+    self assert: EnPassantCaptureSquare contents isNil.                 
+    self assert: captureStandardSquare contents equals: whitePawn.     
+
+    Transcript cr; show: 'Capture normale réussie : pion blanc en e7.'; cr.
 
 ]
 

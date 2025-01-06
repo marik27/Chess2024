@@ -72,13 +72,43 @@ MyPawnTest >> testBlackPawnMovesDoubleStep [
 
 	| pawn board expectedSquares squares |
 	board := MyChessBoard empty.
-	board at: 'e7' put: (pawn := MyPawn black).
+	board at: 'f7' put: (pawn := MyPawn black).
+	pawn state: MyInitialMoveState new.
 	squares := pawn targetSquaresLegal: true.
 	expectedSquares := OrderedCollection new.
-	expectedSquares add: (board at: 'e6').
-	expectedSquares add: (board at: 'e5').
+	expectedSquares add: (board at: 'f6').
+	expectedSquares add: (board at: 'f5').
 	self assert: squares asSet equals: expectedSquares asSet
 	
+]
+
+{ #category : 'tests' }
+MyPawnTest >> testDiagonalCapturesAtBoardEdge [
+" test que les mouvement ne peuvent pas se faire au board dansle cas d 'un plateau 9x9"
+    | board whitePawn blackPawn topSquare bottomSquare whiteCaptures blackCaptures |
+
+    board := MyChessBoard empty.
+
+    topSquare := board at: #e9.
+    whitePawn := MyPawn white.
+    whitePawn setPosition: topSquare.
+    topSquare contents: whitePawn.
+
+    whiteCaptures := whitePawn diagonalPawnCaptures.
+
+    self assert: whiteCaptures isEmpty.
+    Transcript show: 'Test OK pour pion blanc en e8 : aucune capture diagonale possible.'; cr.
+
+    bottomSquare := board at: #e1.
+    blackPawn := MyPawn black.
+    blackPawn setPosition: bottomSquare.
+    bottomSquare contents: blackPawn.
+
+    blackCaptures := blackPawn diagonalPawnCaptures.
+
+    self assert: blackCaptures isEmpty.
+    Transcript show: 'Test OK pour pion noir en e1 : aucune capture diagonale possible.'; cr.
+
 ]
 
 { #category : 'tests' }
