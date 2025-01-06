@@ -108,6 +108,7 @@ MyChessSquare >> down [
 	| nextSquare |
     nextSquare := self + (0 @ -1).
     ^ nextSquare isNullSquare ifTrue: [ NullSquare new ] ifFalse: [ nextSquare ]
+
 ]
 
 { #category : 'asd' }

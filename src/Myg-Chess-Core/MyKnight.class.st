@@ -31,4 +31,5 @@ MyKnight >> targetSquaresLegal: aBoolean [
         square down down right
     } select: [ :s |
         s hasPiece not or: [ s contents color ~= color ]]
+
 ]

@@ -13,6 +13,7 @@ MyKing >> attackingSquares [
 
 { #category : 'rendering' }
 MyKing >> basicTargetSquares [
+
 	"The king can move one square on each direction including diagonals"
 
 	^ { 
@@ -25,6 +26,7 @@ MyKing >> basicTargetSquares [
 		(square down).
 		(square down right)
 	}
+
 
 ]
 
@@ -89,5 +91,6 @@ MyKing >> targetSquaresLegal: aBoolean [
             s hasPiece not or: [ "The square has an opponent piece" 
                 s contents color ~= color and: [ "Let's hope the piece is not defended" 
                     threatenedSquares includes: s ] ] ] ]
+
 
 ]

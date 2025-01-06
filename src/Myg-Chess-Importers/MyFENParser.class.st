@@ -139,18 +139,23 @@ MyFENParser >> parseRank [
 ]
 
 { #category : 'parsing' }
-MyFENParser >> parseRanks [
+MyFENParser >> parseRanks [ 
+    "Analyse dynamiquement les rangées pour gérer différentes tailles d'échiquier."
 
-	| ranks |
-	ranks := (1 to: 7)
-		         collect: [ :i |
-			         | rank |
-			         rank := self parseRank.
-			         self expectString: '/'.
-			         rank ]
-		         as: OrderedCollection.
-	ranks add: self parseRank.
-	^ ranks
+    | ranks rowCount |
+    ranks := OrderedCollection new.
+    rowCount := 0.
+
+    [ stream peek notNil and: [ stream peek ~= Character space ] ] whileTrue: [
+        | rank |
+        rank := self parseRank.
+        ranks add: rank.
+        rowCount := rowCount + 1.
+        (stream peek = $/) ifTrue: [ stream next ].
+    ].
+
+    ^ ranks
+
 ]
 
 { #category : 'parsing' }
@@ -164,11 +169,12 @@ MyFENParser >> parseSideToMove [
 ]
 
 { #category : 'parsing' }
-MyFENParser >> parseSquare [
+MyFENParser >> parseSquare [ 
+    ^ {
+        (self parseAnyOf: ($a to: ($a asciiValue + 8) asCharacter)).
+        (self parseAnyOf: (1 to: 9)).
+    }
 
-	^ {
-		  (self parseAnyOf: ($a to: $h)).
-		  (self parseAnyOf: (3 to: 6)) }
 ]
 
 { #category : 'parsing' }
