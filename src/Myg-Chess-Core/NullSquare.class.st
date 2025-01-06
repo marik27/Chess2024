@@ -52,6 +52,11 @@ NullSquare >> left [
 	^ self
 ]
 
+{ #category : 'accessing' }
+NullSquare >> name [
+^ 'NullSquare'
+]
+
 { #category : 'printing' }
 NullSquare >> printOn: aStream [ 
        
