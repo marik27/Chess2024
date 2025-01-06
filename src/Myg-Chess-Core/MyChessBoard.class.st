@@ -144,7 +144,7 @@ MyChessBoard >> initialize [
 	
 	self initializeWithSize: 9.
 	self solveNQueens: 9.
-	"self initializeSquares."
+"	self initializeSquares."
 
 ]
 
@@ -154,7 +154,7 @@ MyChessBoard >> initializeFromFENBoard: aFENBoard [
 
     aFENBoard keysAndValuesDo: [ :k :v |
         v ~= 'empty' ifTrue: [
-            | substrings color piece square |
+            | substrings color piece square queen |
             substrings := v substrings.
             color := substrings first.
             piece := substrings second.
@@ -162,11 +162,16 @@ MyChessBoard >> initializeFromFENBoard: aFENBoard [
             (grid includesKey: k) ifTrue: [
                 square := grid at: k.
                 ((piece = 'Q') and: [ color = 'white' or: [ color = 'black' ] ]) ifTrue: [
-                    square contents: (color = 'white'
+                    queen := (color = 'white'
                         ifTrue: [ MyQueen white ]
                         ifFalse: [ MyQueen black ]).
-                    square contents square: square.
-                    square contents board: self.
+                    
+                    self at: k put: queen.
+                    queen square: square.
+                    queen board: self.
+                    
+                    "🔍 Vérification dans le Transcript"
+                    Transcript show: '✅ Reine placée à ', k, ' - Couleur : ', color, ' - Type : ', queen class name; cr.
                 ] ifFalse: [
                     Transcript show: '❌ Seules les reines noires et blanches sont placées dans ce mode.'; cr.
                 ].
@@ -250,19 +255,19 @@ MyChessBoard >> initializePiecesWithSize: size [
     penultimateRow := size - 1.
     lastRow := size.
 
-    "✅ Placement des pièces blanches (1ère ligne)"
+    "Placement des pièces blanches (1ère ligne)"
      columnRange withIndexDo: [ :columnAscii :index |
         position := (columnAscii asCharacter asString), firstRow asString.
         square := grid at: position ifAbsent: [
             self error: 'Position ', position, ' introuvable dans grid.'
         ].
         piece := (index caseOf: {
-            [1] -> [ MyRook white ].
+            [1] -> [  ].
             [2] -> [ MyKnight white ].
             [3] -> [ MyBishop white ].
-          [(size // 2)] -> [ MyKing white ].
-            [(size // 2) + 1] -> [ MyKing white ].
-           	[(size // 2) + 2] -> [ MyBishop white ].
+            [(size // 2)]  -> [ MyRook white ].
+            [(size // 2) + 1] -> [ MyBishop white ].
+           	[(size // 2) + 2] -> [ MyKing white ].
             [(size - 2)] -> [ MyKnight white ].
             [(size - 1)] -> [ MyRook white ].
 				[size] -> [ MyRook white ].
@@ -293,19 +298,19 @@ MyChessBoard >> initializePiecesWithSize: size [
         piece ifNotNil: [ piece square: square ].
     ].
 
-    "✅ Placement des pièces noires (dernière ligne)"
+    "Placement des pièces noires (dernière ligne)"
     columnRange withIndexDo: [ :columnAscii :index |
         position := (columnAscii asCharacter asString), lastRow asString.
         square := grid at: position ifAbsent: [
             self error: 'Position ', position, ' introuvable dans grid.'
         ].
         piece := (index caseOf: {
-            [1] -> [ MyRook black ].
+           [1] -> [ MyRook black ].
             [2] -> [ MyKnight black ].
             [3] -> [ MyBishop black ].
-          [(size // 2)] -> [ MyKing black ].
-            [(size // 2) + 1] -> [ MyKing black ].
-           	[(size // 2) + 2] -> [ MyBishop black ].
+          [(size // 2)] -> [ MyRook black ].
+            [(size // 2) + 1] -> [ MyBishop black ].
+           	[(size // 2) + 2] -> [ MyKing black ].
             [(size - 2)] -> [ MyKnight black ].
             [(size - 1)] -> [ MyRook black ].
 				[size] -> [ MyRook black ].
@@ -313,7 +318,6 @@ MyChessBoard >> initializePiecesWithSize: size [
         square contents: piece.
         piece ifNotNil: [ piece square: square ].
     ].
-
 ]
 
 { #category : 'initialization' }
