@@ -51,12 +51,27 @@ MyFENGame >> moveCount: anInteger [
 ]
 
 { #category : 'accessing' }
-MyFENGame >> ranks: aCollection [
+MyFENGame >> ranks: aCollection [ 
+    "Initialise un plateau dynamique basé sur la taille de la collection fournie."
+  | size columnRange |
+    board := Dictionary new.
 
-	board := Dictionary new.
-	aCollection reversed with: (1 to: 8) do: [ :rankPieces :rank |
-		rankPieces with: ($a to: $h) do: [ :piece :column |
-			board at: column asString , rank asString put: piece ] ]
+ 
+    size := aCollection first size. "Taille dynamique basée sur la première ligne"
+    columnRange := ($a asciiValue) to: ($a asciiValue + size - 1).
+
+    aCollection reversed withIndexDo: [:rankPieces :rank |
+        (rankPieces size = size) ifFalse: [
+            self error: 'Toutes les rangées doivent avoir le même nombre de colonnes.'
+        ].
+
+        rankPieces withIndexDo: [:piece :index |
+            | column position |
+            column := (columnRange at: index) asCharacter asString.
+            position := column , rank asString.
+            board at: position put: piece.
+        ].
+    ].
 ]
 
 { #category : 'accessing' }
