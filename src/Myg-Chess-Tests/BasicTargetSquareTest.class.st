@@ -20,13 +20,14 @@ BasicTargetSquareTest >> testBasicTargetSquaresAfterModification [
 
 { #category : 'tests' }
 BasicTargetSquareTest >> testBasicTargetSquaresBeforeModification [
+
 	| king squares board |
 	board := MyChessBoard empty.
 	board at: 'd6' put: (king := MyKing white).
-	
-	squares := king basicTargetSquares.
-	
-	"Avant la modification, il est possible qu'une case cible soit nil"
-	self assert: (squares includes: nil) equals: true.
 
+	squares := king basicTargetSquares.
+
+	"Avant la modification, il est possible qu'une case cible soit nil"
+	"ce test nesera pas vert après modification de basicTargetSquares"
+	self assert: (squares includes: nil) equals: true
 ]
