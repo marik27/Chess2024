@@ -39,7 +39,7 @@ MyChessBoard class >> new [
 { #category : 'accessing' }
 MyChessBoard >> at: coordinate [
 
-	^ grid at: coordinate ifAbsent: nil
+	^ grid at: coordinate ifAbsent: NullSquare new
 ]
 
 { #category : 'accessing' }

@@ -20,17 +20,16 @@ MyKnight >> renderPieceOn: aSquare [
 { #category : 'rendering' }
 MyKnight >> targetSquaresLegal: aBoolean [
 
-    ^ {
-        (square ifNotNil: [ square right ifNotNil: [ :p | p right ifNotNil: [ p up ] ] ]).
-        (square ifNotNil: [ square right ifNotNil: [ :p | p right ifNotNil: [ p down ] ] ]).
-        (square ifNotNil: [ square left ifNotNil: [ :p | p left ifNotNil: [ p up ] ] ]).
-        (square ifNotNil: [ square left ifNotNil: [ :p | p left ifNotNil: [ p down ] ] ]).
-        (square ifNotNil: [ square up ifNotNil: [ :p | p up ifNotNil: [ p left ] ] ]).
-        (square ifNotNil: [ square up ifNotNil: [ :p | p up ifNotNil: [ p right ] ] ]).
-        (square ifNotNil: [ square down ifNotNil: [ :p | p down ifNotNil: [ p left ] ] ]).
-        (square ifNotNil: [ square down ifNotNil: [ :p | p down ifNotNil: [ p right ] ] ])
+	^  {
+        square right right up.
+        square right right down.
+        square left left up.
+        square left left down.
+        square up up left.
+        square up up right.
+        square down down left.
+        square down down right
     } select: [ :s |
-        s notNil and: [ s hasPiece not or: [ s contents color ~= color ] ]
-    ]
+        s hasPiece not or: [ s contents color ~= color ]]
 
 ]

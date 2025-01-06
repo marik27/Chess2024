@@ -1,8 +1,7 @@
 Class {
 	#name : 'MyChessSquare',
-	#superclass : 'BlElement',
+	#superclass : 'AbstractSquare',
 	#instVars : [
-		'color',
 		'name',
 		'label',
 		'piece',
@@ -42,7 +41,7 @@ MyChessSquare >> + aPoint [
 	column := (self column asciiValue + aPoint x) asCharacter asString.
 	file := (self file asciiValue + aPoint y) asCharacter asString.
 
-	^ board at: column , file ifAbsent: [ ^ nil ]
+	^ board at: column , file ifAbsent: [ NullSquare new ]
 ]
 
 { #category : 'accessing' }
@@ -106,8 +105,10 @@ MyChessSquare >> contents: aPiece [
 { #category : 'api - configuration' }
 MyChessSquare >> down [
 
-	^ self + (0 @ -1)
-	
+	| nextSquare |
+    nextSquare := self + (0 @ -1).
+    ^ nextSquare isNullSquare ifTrue: [ NullSquare new ] ifFalse: [ nextSquare ]
+
 ]
 
 { #category : 'asd' }
@@ -171,10 +172,19 @@ MyChessSquare >> initialize [
 	self addEventHandlerOn: BlClickEvent do: [ :e | self click ]
 ]
 
+{ #category : 'testing' }
+MyChessSquare >> isNullSquare [
+
+	^ false
+]
+
 { #category : 'accessing' }
 MyChessSquare >> left [
 
-	^ self + (-1 @ 0)
+	  | nextSquare |
+    nextSquare := self + (-1 @ 0).
+    ^ nextSquare isNullSquare ifTrue: [ NullSquare new ] ifFalse: [ nextSquare ]
+
 ]
 
 { #category : 'accessing' }
@@ -284,8 +294,10 @@ MyChessSquare >> renderRook: aPiece [
 
 { #category : 'accessing' }
 MyChessSquare >> right [
-	
-	^ self + (1@0)
+
+	| nextSquare |
+    nextSquare := self + (1 @ 0).
+    ^ nextSquare isNullSquare ifTrue: [ NullSquare new ] ifFalse: [ nextSquare ]
 ]
 
 { #category : 'initialization' }
@@ -308,6 +320,10 @@ MyChessSquare >> unselect [
 
 { #category : 'instance creation' }
 MyChessSquare >> up [
-	
-	^ self + (0@1)
+
+	| nextSquare |
+	nextSquare := self + (0 @ 1).
+	^ nextSquare isNullSquare
+		  ifTrue: [ NullSquare new ]
+		  ifFalse: [ nextSquare ]
 ]

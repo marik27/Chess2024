@@ -13,17 +13,20 @@ MyKing >> attackingSquares [
 
 { #category : 'rendering' }
 MyKing >> basicTargetSquares [
-    "The king can move one square in each direction, including diagonals"
-    ^ {
-        (square ifNotNil: [ square right ]).
-        (square ifNotNil: [ square up ifNotNil: [ :sq | sq right ] ]).
-        (square ifNotNil: [ square up ]).
-        (square ifNotNil: [ square up ifNotNil: [ :sq | sq left ] ]).
-        (square ifNotNil: [ square left ]).
-        (square ifNotNil: [ square left ifNotNil: [ :sq | sq down ] ]).
-        (square ifNotNil: [ square down ]).
-        (square ifNotNil: [ square down ifNotNil: [ :sq | sq right ] ])
-    } select: [:s | s notNil].
+
+	"The king can move one square on each direction including diagonals"
+
+	^ { 
+		(square right).
+		(square up right).
+		(square up).
+		(square up left).
+		(square left).
+		(square down left).
+		(square down).
+		(square down right)
+	}
+
 
 ]
 
@@ -77,17 +80,17 @@ MyKing >> renderPieceOn: aSquare [
 
 { #category : 'rendering' }
 MyKing >> targetSquaresLegal: aBoolean [
-	"The king cannot move to threatened squares"
+    "The king cannot move to threatened squares"
+    
+    | threatenedSquares |
+    threatenedSquares := self opponentPieces flatCollect: [ :e | 
+        e attackingSquares ].
 
-	| threatenedSquares |
-	threatenedSquares := self opponentPieces flatCollect: [ :e |
-		                     e attackingSquares ].
-	^ self basicTargetSquares select: [ :s |
-		  s notNil and: [
-			  (threatenedSquares includes: s) not and: [
-				  s hasPiece not or: [ 
-					"The square has an opponent piece"
-					s contents color ~= color and: [ 
-						"Let's hope the piece is not defended"
-						threatenedSquares includes: s  ] ] ] ] ]
+    ^ self basicTargetSquares select: [ :s | 
+        (threatenedSquares includes: s) not and: [ 
+            s hasPiece not or: [ "The square has an opponent piece" 
+                s contents color ~= color and: [ "Let's hope the piece is not defended" 
+                    threatenedSquares includes: s ] ] ] ]
+
+
 ]
