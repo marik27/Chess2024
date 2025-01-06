@@ -47,7 +47,7 @@ MyPiece >> collectSquares: aBlock [
 MyPiece >> collectSquares: aBlock legal: shouldBeLegal [
 
 	^ self collectSquares: aBlock while: [ :aSquare |
-		  aSquare notNil and: [ shouldBeLegal ==> aSquare hasPiece not ] ]
+		  aSquare isNullSquare not and: [ shouldBeLegal ==> aSquare hasPiece not ] ]
 ]
 
 { #category : 'rendering' }
@@ -62,7 +62,7 @@ MyPiece >> collectSquares: collectBlock while: untilBlock [
 		whileTrue: [ targets add: next ].
 
 	"If we can it the next piece, then add it too"
-	(next notNil and: [ next contents color ~= color ]) ifTrue: [ targets add: next ].
+	(next isNullSquare not and: [ next contents color ~= color ]) ifTrue: [ targets add: next ].
 
 	^ targets
 ]
