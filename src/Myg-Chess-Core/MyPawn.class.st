@@ -40,27 +40,33 @@ MyPawn >> captureEnPassantTo: aSquare [
 { #category : 'as yet unclassified' }
 MyPawn >> diagonalPawnCaptures [
 	"determine des cases diagonales pour les captures et filtre les cases qui contiennent une pièce de couleur opposée."
+ | upOrDownSquare leftCapture rightCapture captureSquares |
 
-	| leftCapture rightCapture captureSquares |
-	leftCapture := self isWhite
-		               ifTrue: [ square up left ]
-		               ifFalse: [ square down left ].
+    captureSquares := OrderedCollection new.
+    upOrDownSquare := self isWhite
+        ifTrue: [ square up ]
+        ifFalse: [ square down ].
 
-	rightCapture := self isWhite
-		                ifTrue: [ square up right ]
-		                ifFalse: [ square down right ].
+    leftCapture := upOrDownSquare
+        ifNotNil: [ :sq | sq left ]
+        ifNil: [ nil ].
 
-	captureSquares := OrderedCollection new.
+    rightCapture := upOrDownSquare
+        ifNotNil: [ :sq | sq right ]
+        ifNil: [ nil ].
 
-	leftCapture ifNotNil: [
-		(leftCapture hasPiece and: [ leftCapture contents color ~= color ])
-			ifTrue: [ captureSquares add: leftCapture ] ].
+    leftCapture ifNotNil: [
+        (leftCapture hasPiece and: [ leftCapture contents color ~= color ])
+            ifTrue: [ captureSquares add: leftCapture ]
+    ].
 
-	rightCapture ifNotNil: [
-		(rightCapture hasPiece and: [ rightCapture contents color ~= color ])
-			ifTrue: [ captureSquares add: rightCapture ] ].
+    rightCapture ifNotNil: [
+        (rightCapture hasPiece and: [ rightCapture contents color ~= color ])
+            ifTrue: [ captureSquares add: rightCapture ]
+    ].
 
-	^ captureSquares
+    ^ captureSquares
+
 ]
 
 { #category : 'accessing' }

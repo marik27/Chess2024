@@ -29,21 +29,28 @@ MyInitialMoveState >> moveTo: aSquare for: aPawn [
 ]
 
 { #category : 'rendering' }
-MyInitialMoveState >> targetSquaresLegal: aPawn [ 
-
-	| singleStepSquare doubleStepSquare  |
+MyInitialMoveState >> targetSquaresLegal: aPawn [
+"determine les mouvement legal que peut faire le pion dans son etat initial"
+	| singleStepSquare doubleStepSquare legalMoves |
+	legalMoves := OrderedCollection new.
 	
-	singleStepSquare := aPawn  isWhite
-		             ifTrue: [ aPawn square up ]
-		             ifFalse: [ aPawn square down ].
+	
+	singleStepSquare := aPawn isWhite
+		                    ifTrue: [ aPawn square up ]
+		                    ifFalse: [ aPawn square down ].
 
 	doubleStepSquare := aPawn isWhite
-		             ifTrue: [aPawn square up up ]
-		             ifFalse: [ aPawn square down down ].
-		
+		                    ifTrue: [ aPawn square up up ]
+		                    ifFalse: [ aPawn square down down ].
 
-	^  { singleStepSquare} , { doubleStepSquare } select: [ :s |
-		  s notNil and: [ s hasPiece not or: [ s contents color ~= aPawn color ] ] ]
-        
+	singleStepSquare ifNotNil: [ 
+		singleStepSquare hasPiece ifFalse: [
+			legalMoves add: singleStepSquare ] ].
 
+	(aPawn hasMoved not and: [ singleStepSquare notNil ]) ifTrue: [
+		((singleStepSquare hasPiece not and: [ doubleStepSquare notNil ])
+			 and: [ doubleStepSquare hasPiece not ]) ifTrue: [
+			legalMoves add: doubleStepSquare ] ].
+
+	^ legalMoves
 ]
