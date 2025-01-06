@@ -41,6 +41,11 @@ NullSquare >> initialize [
 	color := Color transparent
 ]
 
+{ #category : 'as yet unclassified' }
+NullSquare >> isNullSquare [ 
+^true
+]
+
 { #category : 'accessing' }
 NullSquare >> left [
 
