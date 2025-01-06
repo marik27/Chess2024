@@ -69,6 +69,18 @@ MyChessBoard >> blackColor: anObject [
 	blackColor := anObject
 ]
 
+{ #category : 'as yet unclassified' }
+MyChessBoard >> clearBoard [ [
+    grid keysDo: [ :key |
+        | square |
+        square := grid at: key.
+        square contents: nil.
+    ].
+    selected := nil.
+    state := MyUnselectedState board: self.
+]
+]
+
 { #category : 'event handling' }
 MyChessBoard >> click: aMyChessSquare [ 
 	
@@ -132,31 +144,45 @@ MyChessBoard >> initialize [
 	
 	self initializeWithSize: 9.
 	self solveNQueens: 9.
+	"self initializeSquares."
 
 ]
 
 { #category : 'initialization' }
-MyChessBoard >> initializeFromFENBoard: aFENBoard [
+MyChessBoard >> initializeFromFENBoard: aFENBoard [ 
+    "Place les pièces dynamiquement sur un échiquier pour le puzzle des N reines."
 
-    "Parcourir les clés et valeurs pour placer les pièces"
     aFENBoard keysAndValuesDo: [ :k :v |
         v ~= 'empty' ifTrue: [
-            | substrings color piece |
+            | substrings color piece square |
             substrings := v substrings.
             color := substrings first.
             piece := substrings second.
+            
             (grid includesKey: k) ifTrue: [
-                self
-                    at: k
-                    put:
-                        ((self class environment at: ('My' , piece capitalized) asSymbol)
-                                perform: color asLowercase asSymbol)
+                square := grid at: k.
+                ((piece = 'Q') and: [ color = 'white' or: [ color = 'black' ] ]) ifTrue: [
+                    square contents: (color = 'white'
+                        ifTrue: [ MyQueen white ]
+                        ifFalse: [ MyQueen black ]).
+                    square contents square: square.
+                    square contents board: self.
+                ] ifFalse: [
+                    Transcript show: '❌ Seules les reines noires et blanches sont placées dans ce mode.'; cr.
+                ].
             ] ifFalse: [
-                Transcript show: 'Position ', k, ' en dehors des limites de 9x9'; cr.
+                Transcript show: '❌ Position ', k, ' en dehors des limites de l''échiquier'; cr.
             ].
         ]
     ].
 
+]
+
+{ #category : 'initialization' }
+MyChessBoard >> initializeNQueensBoardWithSize: size [
+    self initializeWithSize: size.
+    self clearBoard.
+    self solveNQueens: size.
 ]
 
 { #category : 'initialization' }
@@ -225,14 +251,21 @@ MyChessBoard >> initializePiecesWithSize: size [
     lastRow := size.
 
     "✅ Placement des pièces blanches (1ère ligne)"
-    columnRange withIndexDo: [ :columnAscii :index |
+     columnRange withIndexDo: [ :columnAscii :index |
         position := (columnAscii asCharacter asString), firstRow asString.
-        square := grid at: position ifAbsent: [ 
-            self error: 'Position ', position, ' introuvable dans grid.' 
+        square := grid at: position ifAbsent: [
+            self error: 'Position ', position, ' introuvable dans grid.'
         ].
         piece := (index caseOf: {
-         
-            [size] -> [ MyRook white ].
+            [1] -> [ MyRook white ].
+            [2] -> [ MyKnight white ].
+            [3] -> [ MyBishop white ].
+          [(size // 2)] -> [ MyKing white ].
+            [(size // 2) + 1] -> [ MyKing white ].
+           	[(size // 2) + 2] -> [ MyBishop white ].
+            [(size - 2)] -> [ MyKnight white ].
+            [(size - 1)] -> [ MyRook white ].
+				[size] -> [ MyRook white ].
         } otherwise: [ nil ]).
         square contents: piece.
         piece ifNotNil: [ piece square: square ].
@@ -270,7 +303,7 @@ MyChessBoard >> initializePiecesWithSize: size [
             [1] -> [ MyRook black ].
             [2] -> [ MyKnight black ].
             [3] -> [ MyBishop black ].
-            [(size // 2)] -> [ MyQueen black ].
+          [(size // 2)] -> [ MyKing black ].
             [(size // 2) + 1] -> [ MyKing black ].
            	[(size // 2) + 2] -> [ MyBishop black ].
             [(size - 2)] -> [ MyKnight black ].
@@ -286,7 +319,7 @@ MyChessBoard >> initializePiecesWithSize: size [
 { #category : 'initialization' }
 MyChessBoard >> initializeSquares [
 
-	"| black |
+	| black |
 	black := false.
 	$a asciiValue to: $h asciiValue do: [ :column |
 		8 to: 1 by: -1 do: [ :file |
@@ -312,7 +345,7 @@ MyChessBoard >> initializeSquares [
 			square name: squareNotation.
 			grid at: squareNotation put: square.
 			self addChild: square ].
-		black := black not ]"
+		black := black not ]
 ]
 
 { #category : 'initialization' }
@@ -385,6 +418,19 @@ MyChessBoard >> initializeWithSize: size [
 ]
 
 { #category : 'testing' }
+MyChessBoard >> isSafeAtRow: row column: col [
+    "Vérifie si une reine peut être placée en toute sécurité sur une case donnée."
+    1 to: row - 1 do: [:r |
+        | c |
+        c := queenPositions at: r ifAbsent: [ nil ].
+        c ifNotNil: [
+            (c = col or: [(c - col) abs = (r - row) abs]) ifTrue: [ ^false ].
+        ].
+    ].
+    ^true
+]
+
+{ #category : 'testing' }
 MyChessBoard >> isSafeAtRow: row column: col board: board [ 
     "Vérifie si une reine peut être placée en toute sécurité."
     1 to: row - 1 do: [:r |
@@ -433,20 +479,30 @@ MyChessBoard >> selected: aMyChessSquare [
 
 { #category : 'as yet unclassified' }
 MyChessBoard >> solveNQueens: size [ 
-    "Résout le problème des N reines pour un échiquier de taille donnée et affiche une solution."
+    "Résout le problème des N reines pour un échiquier de taille donnée et affiche une solution valide."
 
     | board solutions |
     board := Array new: size.
     solutions := OrderedCollection new.
+    queenPositions := OrderedCollection new. "Initialisation des positions des reines"
+
     self placeQueenOnRow: 1 board: board size: size solutions: solutions.
     
     "Afficher la première solution trouvée"
     solutions isEmpty ifFalse: [
         self displaySolution: solutions first.
-        Transcript show: 'Solution trouvée et affichée.'; cr.
+        Transcript show: '✅ Solution trouvée et affichée.'; cr.
+        "Remplir queenPositions avec les coordonnées finales"
+        1 to: size do: [:row |
+            | col coordinate |
+            col := solutions first at: row.
+            coordinate := (Character value: ($a asciiValue + col - 1)) asString , row asString.
+            queenPositions add: coordinate.
+        ].
     ] ifTrue: [
-        Transcript show: 'Aucune solution trouvée.'; cr.
+        Transcript show: '❌ Aucune solution trouvée pour les N reines.'; cr.
     ].
+
 ]
 
 { #category : 'highlighting' }

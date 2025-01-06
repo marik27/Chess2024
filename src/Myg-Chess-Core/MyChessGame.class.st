@@ -57,6 +57,12 @@ MyChessGame >> checkForMate [
 ]
 
 { #category : 'as yet unclassified' }
+MyChessGame >> checkForVictory [ 
+    (board pieces size = 9 and: [ self queensAreSafe ]) 
+        ifTrue: [ self halt: 'You solved the 9 queens puzzle!' ].
+]
+
+{ #category : 'as yet unclassified' }
 MyChessGame >> fenAsDictionary [
     "Convertit les informations du jeu FEN en dictionnaire pour le placement des pièces."
     | boardDictionary  board|
@@ -69,6 +75,12 @@ board := MyChessBoard.
         boardDictionary at: position put: piece.
     ].
     ^ boardDictionary
+
+]
+
+{ #category : 'instance creation' }
+MyChessGame >> freshGame [ 
+    ^ self fromFENString: 'rnbqkbnrq/ppppppppp/9/9/9/9/PPPPPPPPP/RNBQKBNRQ w KQkq - 0 1'
 
 ]
 
@@ -189,6 +201,19 @@ MyChessGame >> initializeFromFENGame: aFENGame size: size [
 
 ]
 
+{ #category : 'initialization' }
+MyChessGame >> initializeNQueensGameWithSize: size [ 
+    board := MyChessBoard new.
+    board initializeNQueensBoardWithSize: size.
+    board game: self.
+
+    currentPlayer := nil.
+    moveCount := 0.
+
+    self layoutGameInterface.
+    self checkForVictory.
+]
+
 { #category : 'public' }
 MyChessGame >> move: piece to: square [
 
@@ -212,6 +237,14 @@ MyChessGame >> play [
 			moveCount := moveCount + 1.
 			currentPlayer := whitePlayer ].
 	self checkForMate
+]
+
+{ #category : 'as yet unclassified' }
+MyChessGame >> queensAreSafe [
+    | queenPositions |
+    queenPositions := board pieces select: [ :piece | piece isKindOf: MyQueen ].
+    ^ queenPositions size = 9 
+      and: [ queenPositions allSatisfy: [ :queen | self isSafe: queen ] ].
 ]
 
 { #category : 'moves' }
