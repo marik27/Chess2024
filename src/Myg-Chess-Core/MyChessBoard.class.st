@@ -313,7 +313,7 @@ MyChessBoard >> initializePiecesWithSize: size [
            	[(size // 2) + 2] -> [ MyKing black ].
             [(size - 2)] -> [ MyKnight black ].
             [(size - 1)] -> [ MyRook black ].
-				[size] -> [ MyRook black ].
+				[size] -> [ MyRook black].
         } otherwise: [ nil ]).
         square contents: piece.
         piece ifNotNil: [ piece square: square ].
@@ -358,7 +358,6 @@ MyChessBoard >> initializeSquaresWithSize: size [
 
    | black |
     black := false.
-
     ($a asciiValue) to: ($a asciiValue + size - 1) do: [:column |
         size to: 1 by: -1 do: [:row |
             | squareNotation square expectedColor |
