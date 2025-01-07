@@ -69,18 +69,6 @@ MyChessBoard >> blackColor: anObject [
 	blackColor := anObject
 ]
 
-{ #category : 'as yet unclassified' }
-MyChessBoard >> clearBoard [ [
-    grid keysDo: [ :key |
-        | square |
-        square := grid at: key.
-        square contents: nil.
-    ].
-    selected := nil.
-    state := MyUnselectedState board: self.
-]
-]
-
 { #category : 'event handling' }
 MyChessBoard >> click: aMyChessSquare [ 
 	
@@ -88,7 +76,7 @@ MyChessBoard >> click: aMyChessSquare [
 ]
 
 { #category : 'as yet unclassified' }
-MyChessBoard >> displaySolution: solution [
+MyChessBoard >> displaySolution: solution [ 
     "Affiche une solution valide de N reines sur le plateau en utilisant at:put:"
 
     1 to: solution size do: [:row |
@@ -276,7 +264,7 @@ MyChessBoard >> initializePiecesWithSize: size [
         piece ifNotNil: [ piece square: square ].
     ].
 
-    "✅ Placement des pions blancs (2ème ligne)"
+    " Placement des pions blancs (2ème ligne)"
     columnRange do: [ :columnAscii |
         position := (columnAscii asCharacter asString), secondRow asString.
         square := grid at: position ifAbsent: [
@@ -287,7 +275,7 @@ MyChessBoard >> initializePiecesWithSize: size [
         piece ifNotNil: [ piece square: square ].
     ].
 
-    "✅ Placement des pions noirs (avant-dernière ligne)"
+    "Placement des pions noirs (avant-dernière ligne)"
     columnRange do: [ :columnAscii |
         position := (columnAscii asCharacter asString), penultimateRow asString.
         square := grid at: position ifAbsent: [
@@ -493,8 +481,8 @@ MyChessBoard >> solveNQueens: size [
     
     "Afficher la première solution trouvée"
     solutions isEmpty ifFalse: [
-        self displaySolution: solutions first.
-        Transcript show: '✅ Solution trouvée et affichée.'; cr.
+	  self displaySolution: solutions first.
+        Transcript show: 'Solution trouvée et affichée.'; cr.
         "Remplir queenPositions avec les coordonnées finales"
         1 to: size do: [:row |
             | col coordinate |
